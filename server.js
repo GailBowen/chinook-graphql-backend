@@ -14,20 +14,40 @@ let db = new sqlite3.Database('chinook.db', (err) => {
 // Schema
 const schema = buildSchema(`
   type Query {
-    albums: [Album],
+    getAlbums: [Album],
     getAlbum(albumId: Int!): Album,
+
     getArtists: [Artist],
     getArtist(artistId: Int!): Artist,
+
     getCustomers: [Customer],
     getCustomer(customerId: Int!): Customer,
+
     getEmployees: [Employee],
     getEmployee(employeeId: Int!): Employee,
+
     getGenres: [Genre],
     getGenre(genreId: Int!): Genre,
+
     getInvoice(invoiceId: Int!): Invoice,
     getInvoiceByCustomer(customerId: Int!): [Invoice]
     getInvoiceLines(invoiceId: Int!): [InvoiceLine]
+
     getMediaTypes: [MediaType]
+    getMediaType(mediaTypeId: Int!): MediaType
+
+    getPlaylists: [Playlist]
+    getPlaylist(playListId: Int!): Playlist
+
+    getPlaylistTracks(playListId: Int!): [PlaylistTrack]
+    getTrackPlaylists(trackId: Int!): [PlaylistTrack]
+
+    getTracks: [Track]
+    getTrack(trackId: Int!): Track
+    getTracksByAlbum(albumId: Int!): [Track]
+    getTracksByMediaType(mediaTypeId: Int!): [Track]
+    getTracksByGenre(genreId: Int!): [Track]
+
   },
   type Album {
     AlbumId: Int
@@ -96,6 +116,24 @@ const schema = buildSchema(`
     MediaTypeId: Int
     Name: String
   }
+  type Playlist {
+    PlaylistId: Int
+    Name: String
+  }
+  type PlaylistTrack {
+    PlaylistId: Int
+    Track: Int
+  }
+  type Track {
+    TrackId: Int
+    Name: String
+    AlbumId: Int
+    MediaTypeId: Int
+    Composer: String
+    Millisecopnds: Int
+    Bytes: Int
+    UnitPrice: Float
+  }
 `);
 
 
@@ -124,8 +162,18 @@ const retrieveMediaTypes = (args) => {
   return retrieveList(sql);
 }
 
+const retrievePlaylists = (args) => {
+  const sql = 'SELECT * FROM Playlist';
+  return retrieveList(sql);
+}
+
 const retrieveGenres = (args) => {
   const sql = 'SELECT * FROM Genre';
+  return retrieveList(sql);
+}
+
+const retrieveTracks = (args) => {
+  const sql = 'SELECT * FROM Track';
   return retrieveList(sql);
 }
 
@@ -141,6 +189,41 @@ const retrieveInvoicesByCustomer = (args) => {
 const retrieveInvoiceLines = (args) => {
   const sql = 'SELECT * FROM InvoiceLine WHERE InvoiceId = ?';
   const id = args.invoiceId;
+
+  return retrieveListByFields(sql, [id]);
+}
+
+const retrievePlaylistTracks = (args) => {
+  const sql = 'SELECT * FROM PlaylistTrack WHERE PlaylistId = ?';
+  const id = args.playListId;
+
+  return retrieveListByFields(sql, [id]);
+}
+
+const retrieveTrackPlaylists = (args) => {
+  const sql = 'SELECT * FROM PlaylistTrack WHERE TrackId = ?';
+  const id = args.trackId;
+
+  return retrieveListByFields(sql, [id]);
+}
+
+const retrieveTracksByAlbum = (args) => {
+  const sql = 'SELECT * FROM Track WHERE AlbumId = ?';
+  const id = args.albumId;
+
+  return retrieveListByFields(sql, [id]);
+}
+
+const retrieveTracksByGenre = (args) => {
+  const sql = 'SELECT * FROM Track WHERE GenreId = ?';
+  const id = args.genreId;
+
+  return retrieveListByFields(sql, [id]);
+}
+
+const retrieveTracksByMediaType = (args) => {
+  const sql = 'SELECT * FROM Track WHERE MediaTypeId = ?';
+  const id = args.mediaTypeId;
 
   return retrieveListByFields(sql, [id]);
 }
@@ -202,6 +285,24 @@ const retrieveInvoice = (args) => {
   return retrieveRowByFields(sql, [id]);
 }
 
+const retrieveMediaType = (args) => {
+  const sql = 'SELECT * FROM MediaType WHERE MediaTypeId = ?';
+  const mediaTypeId = args.mediaTypeId;
+  return retrieveRowByFields(sql, mediaTypeId);
+}
+
+const retrievePlaylist = (args) => {
+  const sql = 'SELECT * FROM Playlist WHERE PlaylistId = ?';
+  const playListId = args.playListId;
+  return retrieveRowByFields(sql, playListId);
+}
+
+const retrieveTrack = (args) => {
+  const sql = 'SELECT * FROM Track WHERE TrackId = ?';
+  const trackId = args.trackId;
+  return retrieveRowByFields(sql, trackId);
+}
+
 const retrieveRowByFields = (sql, fields) => {
   const p = new Promise((resolve, reject) => {
     db.get(sql, fields, (err, row) => {
@@ -218,20 +319,38 @@ const retrieveRowByFields = (sql, fields) => {
 
 // Root resolver
 const root = {
-  albums: retrieveAlbums,
+  getAlbums: retrieveAlbums,
   getAlbum: retrieveAlbum,
+
   getArtists: retrieveArtists,
   getArtist: retrieveArtist,
+
   getCustomers: retrieveCustomers,
   getCustomer: retrieveCustomer,
+
   getEmployees: retrieveEmployees,
   getEmployee: retrieveEmployee,
+
   getGenres: retrieveGenres,
   getGenre: retrieveGenre,
+
   getInvoice: retrieveInvoice,
   getInvoiceByCustomer: retrieveInvoicesByCustomer,
   getInvoiceLines: retrieveInvoiceLines,
-  getMediaTypes: retrieveMediaTypes
+
+  getMediaTypes: retrieveMediaTypes,
+  getMediaType: retrieveMediaType,
+
+  getPlaylists: retrievePlaylists,
+  getPlaylist: retrievePlaylist,
+  getPlaylistTracks: retrievePlaylistTracks,
+  getTrackPlaylists: retrieveTrackPlaylists,
+
+  getTracks: retrieveTracks,
+  getTrack: retrieveTrack,
+  getTracksByAlbum: retrieveTracksByAlbum,
+  getTracksByMediaType: retrieveTracksByMediaType,
+  getTracksByGenre: retrieveTracksByGenre
 };
 
 var app = express();
