@@ -2,6 +2,7 @@ const express = require('express');
 const graphqlHTTP = require('express-graphql');
 const { buildSchema } = require('graphql');
 const sqlite3 = require('sqlite3').verbose();
+const cors = require('cors');
 
 let db = new sqlite3.Database('chinook.db', (err) => {
   if (err) {
@@ -354,6 +355,7 @@ const root = {
 };
 
 var app = express();
+app.use(cors());
 app.use('/graphql', graphqlHTTP.graphqlHTTP({
   schema: schema,
   rootValue: root,
