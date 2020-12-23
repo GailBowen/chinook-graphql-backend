@@ -17,6 +17,7 @@ const schema = buildSchema(`
   type Query {
     getAlbums: [Album],
     getAlbum(albumId: Int!): Album,
+    getAlbumsByArtist(artistId: Int!): [Album],
 
     getArtists: [Artist],
     getArtist(artistId: Int!): Artist,
@@ -48,7 +49,6 @@ const schema = buildSchema(`
     getTracksByAlbum(albumId: Int!): [Track]
     getTracksByMediaType(mediaTypeId: Int!): [Track]
     getTracksByGenre(genreId: Int!): [Track]
-
   },
   type Album {
     AlbumId: Int
@@ -131,7 +131,7 @@ const schema = buildSchema(`
     AlbumId: Int
     MediaTypeId: Int
     Composer: String
-    Millisecopnds: Int
+    Milliseconds: Int
     Bytes: Int
     UnitPrice: Float
   }
@@ -179,6 +179,12 @@ const retrieveTracks = (args) => {
 }
 
 const retrieveList = (sql) => retrieveListByFields(sql, []);
+
+const retrieveAlbumsByArtist = (args) => {
+  const sql = 'SELECT * FROM Album WHERE ArtistId = ?';
+  const id = args.artistId;
+  return retrieveListByFields(sql, [id]);
+}
 
 const retrieveInvoicesByCustomer = (args) => {
   const sql = 'SELECT * FROM Invoice WHERE CustomerId = ?';
@@ -322,6 +328,7 @@ const retrieveRowByFields = (sql, fields) => {
 const root = {
   getAlbums: retrieveAlbums,
   getAlbum: retrieveAlbum,
+  getAlbumsByArtist: retrieveAlbumsByArtist,
 
   getArtists: retrieveArtists,
   getArtist: retrieveArtist,
