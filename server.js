@@ -112,6 +112,7 @@ const schema = buildSchema(`
     TrackId: Int
     UnitPrice: Float
     Quantity: Int
+    TrackName: String
   }
   type MediaType {
     MediaTypeId: Int
@@ -194,7 +195,10 @@ const retrieveInvoicesByCustomer = (args) => {
 }
 
 const retrieveInvoiceLines = (args) => {
-  const sql = 'SELECT * FROM InvoiceLine WHERE InvoiceId = ?';
+  const sql = `SELECT il.*, t.Name AS TrackName
+                FROM InvoiceLine il
+                JOIN Track t ON il.TrackId=t.TrackId
+                WHERE il.InvoiceId = ?`;
   const id = args.invoiceId;
 
   return retrieveListByFields(sql, [id]);
