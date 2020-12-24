@@ -73,6 +73,8 @@ const schema = buildSchema(`
     Fax: String
     Email: String
     SupportRepId: String
+    SupportRepFirstName: String
+    SupportRepLastName: String
   },
   type Genre {
     GenreId: Int
@@ -94,6 +96,8 @@ const schema = buildSchema(`
     Phone: String
     Fax: String
     Email: String
+    ReportsToFirstName: String
+    ReportsToLastName: String
   },
   type Invoice {
     InvoiceId: Int
@@ -135,6 +139,8 @@ const schema = buildSchema(`
     Milliseconds: Int
     Bytes: Int
     UnitPrice: Float
+    AlbumTitle: String
+    MediaTypeName: String
   }
 `);
 
@@ -195,10 +201,11 @@ const retrieveInvoicesByCustomer = (args) => {
 }
 
 const retrieveInvoiceLines = (args) => {
-  const sql = `SELECT il.*, t.Name AS TrackName
-                FROM InvoiceLine il
-                JOIN Track t ON il.TrackId=t.TrackId
-                WHERE il.InvoiceId = ?`;
+  const sql = `
+    SELECT il.*, t.Name AS TrackName
+    FROM InvoiceLine il
+    JOIN Track t ON il.TrackId=t.TrackId
+    WHERE il.InvoiceId = ?`;
   const id = args.invoiceId;
 
   return retrieveListByFields(sql, [id]);
@@ -269,14 +276,22 @@ const retrieveArtist = (args) => {
 }
 
 const retrieveCustomer = (args) => {
-  const sql = 'SELECT * FROM Customer WHERE CustomerId = ?';
+  const sql = `
+    SELECT c.*, e.FirstName AS SupportRepFirstName, e.LastName AS SupportRepLastName
+    FROM Customer c
+    LEFT JOIN Employee e ON c.SupportRepId=e.EmployeeId
+    WHERE c.CustomerId = ?`;
   const id = args.customerId;
 
   return retrieveRowByFields(sql, [id]);
 }
 
 const retrieveEmployee = (args) => {
-  const sql = 'SELECT * FROM Employee WHERE EmployeeId = ?';
+  const sql = `
+    SELECT e1.*, e2.FirstName as ReportsToFirstName, e2.LastName as ReportsToLastName 
+    FROM Employee AS e1
+    LEFT JOIN Employee AS e2 ON e1.ReportsTo=e2.EmployeeId
+    WHERE e1.EmployeeId = ?`;
   const id = args.employeeId;
 
   return retrieveRowByFields(sql, [id]);
@@ -309,7 +324,12 @@ const retrievePlaylist = (args) => {
 }
 
 const retrieveTrack = (args) => {
-  const sql = 'SELECT * FROM Track WHERE TrackId = ?';
+  const sql = `
+    SELECT t.*, a.Title AS AlbumTitle, mt.Name as MediaTypeName
+    FROM Track t
+    JOIN Album a ON t.AlbumId=a.AlbumId
+    Join MediaType mt on t.MediaTypeId=mt.MediaTypeId
+    WHERE t.TrackId = ?`;
   const trackId = args.trackId;
   return retrieveRowByFields(sql, trackId);
 }
