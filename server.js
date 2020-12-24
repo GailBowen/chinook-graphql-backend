@@ -50,6 +50,9 @@ const schema = buildSchema(`
     getTracksByMediaType(mediaTypeId: Int!): [Track]
     getTracksByGenre(genreId: Int!): [Track]
   },
+  type Mutation {
+    setGenre(genreId: Int, genreName: String!): Genre
+  }
   type Album {
     AlbumId: Int
     Title: String
@@ -321,7 +324,7 @@ const retrievePlaylist = (args) => {
   const sql = 'SELECT * FROM Playlist WHERE PlaylistId = ?';
   const playListId = args.playListId;
   return retrieveRowByFields(sql, playListId);
-}
+} 
 
 const retrieveTrack = (args) => {
   const sql = `
@@ -348,6 +351,36 @@ const retrieveRowByFields = (sql, fields) => {
   return p;
 }
 
+const setGenre = (args) => {
+  const genreId = args.genreId;
+  const genreName = args.genreName;
+
+  if (genreId) {
+    if (updateGenre(genreId, genreName)) {
+      return retrieveGenre({ genreId: genreId});
+    }
+  } else {
+  }
+}
+
+const updateGenre = (genreId, genreName) => {
+  const sql = `
+    UPDATE Genre
+    SET Name = ?
+    WHERE GenreID = ?;
+    `;
+
+  const p = new Promise((resolve, reject) => {
+    db.run(sql, [genreName, genreId], (err) =>  {
+
+      if (err) {
+        reject(err);
+      }
+    });
+  });
+  return p;
+}
+
 // Root resolver
 const root = {
   getAlbums: retrieveAlbums,
@@ -365,6 +398,7 @@ const root = {
 
   getGenres: retrieveGenres,
   getGenre: retrieveGenre,
+  setGenre: setGenre,
 
   getInvoice: retrieveInvoice,
   getInvoiceByCustomer: retrieveInvoicesByCustomer,
