@@ -52,6 +52,7 @@ const schema = buildSchema(`
   },
   type Mutation {
     setGenre(genreId: Int, genreName: String!): Genre
+    addGenre(genreName: String!): Genre
   }
   type Album {
     AlbumId: Int
@@ -360,6 +361,9 @@ const setGenre = (args) => {
       return retrieveGenre({ genreId: genreId});
     }
   } else {
+    if (addGenre(genreName)) {
+      
+    }
   }
 }
 
@@ -370,8 +374,31 @@ const updateGenre = (genreId, genreName) => {
     WHERE GenreID = ?;
     `;
 
+  return runSql(sql, [genreId, genreName]);
+}
+
+const addGenre = (genreName) => {
+  const maxSql = `
+    SELECT MAX(GenreID)+1 as GenreId FROM Genre;
+  `
+  const i = retrieveRowByFields(maxSql, [])
+    .then(x => {
+
+      const sql = `
+        INSERT INTO Genre (GenreId, Name)
+        VALUES (
+          ?, ?);
+      `;
+
+      runSql(sql, [x.GenreId, genreName.genreName]);
+    });
+
+
+}
+
+const runSql = (sql, params) => {
   const p = new Promise((resolve, reject) => {
-    db.run(sql, [genreName, genreId], (err) =>  {
+    db.run(sql, params, (err) =>  {
 
       if (err) {
         reject(err);
@@ -398,6 +425,7 @@ const root = {
 
   getGenres: retrieveGenres,
   getGenre: retrieveGenre,
+  addGenre: addGenre,
   setGenre: setGenre,
 
   getInvoice: retrieveInvoice,
