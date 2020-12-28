@@ -53,6 +53,7 @@ const schema = buildSchema(`
   type Mutation {
     setGenre(genreId: Int, genreName: String!): Genre
     addGenre(genreName: String!): Genre
+    deleteGenre(genreId: Int!) : Int
   }
   type Album {
     AlbumId: Int
@@ -392,8 +393,15 @@ const addGenre = (genreName) => {
 
       runSql(sql, [x.GenreId, genreName.genreName]);
     });
+}
 
+const deleteGenre = (args) => {
+  const genreId = args.genreId;
+  const sql = `
+    DELETE FROM Genre WHERE GenreId=?;
+  `;
 
+  runSql(sql, [genreId]);
 }
 
 const runSql = (sql, params) => {
@@ -427,6 +435,7 @@ const root = {
   getGenre: retrieveGenre,
   addGenre: addGenre,
   setGenre: setGenre,
+  deleteGenre: deleteGenre,
 
   getInvoice: retrieveInvoice,
   getInvoiceByCustomer: retrieveInvoicesByCustomer,
