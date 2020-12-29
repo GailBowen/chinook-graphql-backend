@@ -59,6 +59,7 @@ const schema = buildSchema(`
     AlbumId: Int
     Title: String
     ArtistId: Int
+    ArtistName: String
   },
   type Artist {
     ArtistId: Int
@@ -269,7 +270,11 @@ const retrieveListByFields = (sql, fields) => {
 }
 
 const retrieveAlbum = (args) => {
-  const sql = 'SELECT * FROM Album WHERE AlbumId = ?';
+  const sql = `
+  SELECT Album.*, Artist.Name AS ArtistName
+  FROM Album 
+  JOIN Artist ON Album.ArtistId=Artist.ArtistId
+  WHERE Album.AlbumId = ?`;
   const id = args.albumId;
 
   return retrieveRowByFields(sql, [id]);
