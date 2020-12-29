@@ -164,7 +164,7 @@ const retrieveArtists = (args) => {
 }
 
 const retrieveCustomers = (args) => {
-  const sql = 'SELECT * FROM Customer';
+  const sql = 'SELECT * FROM Customer ORDER BY LastName';
   return retrieveList(sql);
 }
 
