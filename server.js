@@ -154,12 +154,12 @@ const schema = buildSchema(`
 
 
 const retrieveAlbums = (args) => {
-  const sql = 'SELECT * FROM Album';
+  const sql = 'SELECT * FROM Album ORDER BY Title';
   return retrieveList(sql);
 }
 
 const retrieveArtists = (args) => {
-  const sql = 'SELECT * FROM Artist';
+  const sql = 'SELECT * FROM Artist ORDER BY Name';
   return retrieveList(sql);
 }
 
