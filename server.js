@@ -171,7 +171,7 @@ const retrieveCustomers = (args) => {
 }
 
 const retrieveEmployees = (args) => {
-  const sql = 'SELECT * FROM Employee';
+  const sql = 'SELECT * FROM Employee ORDER BY LastName';
   return retrieveList(sql);
 }
 
