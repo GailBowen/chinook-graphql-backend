@@ -186,7 +186,7 @@ const retrievePlaylists = (args) => {
 }
 
 const retrieveGenres = (args) => {
-  const sql = 'SELECT * FROM Genre';
+  const sql = 'SELECT * FROM Genre ORDER BY Name';
   return retrieveList(sql);
 }
 
