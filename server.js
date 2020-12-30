@@ -149,6 +149,8 @@ const schema = buildSchema(`
     AlbumTitle: String
     MediaTypeName: String
     GenreName: String
+    ArtistId: Int
+    ArtistName: String
   }
 `);
 
@@ -189,7 +191,12 @@ const retrieveGenres = (args) => {
 }
 
 const retrieveTracks = (args) => {
-  const sql = 'SELECT * FROM Track';
+  const sql = `
+    SELECT t.*, ar.Name AS ArtistName, ar.ArtistId
+    FROM Track t
+    JOIN Album al ON t.AlbumId=al.AlbumId
+    JOIN Artist ar ON al.ArtistId=ar.ArtistId
+    ORDER BY Name`;
   return retrieveList(sql);
 }
 
@@ -337,11 +344,13 @@ const retrievePlaylist = (args) => {
 
 const retrieveTrack = (args) => {
   const sql = `
-    SELECT t.*, a.Title AS AlbumTitle, mt.Name as MediaTypeName, g.Name as GenreName
+    SELECT t.*, a.Title AS AlbumTitle, mt.Name as MediaTypeName, 
+      g.Name as GenreName, ar.Name AS ArtistName, ar.ArtistId
     FROM Track t
     JOIN Album a ON t.AlbumId=a.AlbumId
     JOIN MediaType mt ON t.MediaTypeId=mt.MediaTypeId
     JOIN Genre g ON t.GenreId=g.GenreId
+    JOIN Artist ar ON a.ArtistID=ar.ArtistId
     WHERE t.TrackId = ?`;
   const trackId = args.trackId;
   return retrieveRowByFields(sql, trackId);
