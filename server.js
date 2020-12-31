@@ -176,7 +176,7 @@ const retrieveEmployees = (args) => {
 }
 
 const retrieveMediaTypes = (args) => {
-  const sql = 'SELECT * FROM MediaType';
+  const sql = 'SELECT * FROM MediaType ORDER BY Name';
   return retrieveList(sql);
 }
 
