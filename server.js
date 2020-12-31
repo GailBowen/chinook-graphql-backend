@@ -54,6 +54,8 @@ const schema = buildSchema(`
     setGenre(genreId: Int, genreName: String!): Genre
     addGenre(genreName: String!): Genre
     deleteGenre(genreId: Int!) : Int
+
+    setArtist(artistId: Int, artistName: String!): Artist
   }
   type Album {
     AlbumId: Int
@@ -370,6 +372,25 @@ const retrieveRowByFields = (sql, fields) => {
   return p;
 }
 
+const setArtist = (args) => {
+  const artistId = args.artistId;
+  const artistName = args.artistName;
+
+  if (artistId) {
+    updateArtist(artistId, artistName);
+  }
+}
+
+const updateArtist = (artistId, artistName) => {
+  const sql = `
+    UPDATE Artist
+    SET Name = ?
+    WHERE ArtistId = ?;
+  `
+
+  return runSql(sql, [artistName, artistId]);
+}
+
 const setGenre = (args) => {
   const genreId = args.genreId;
   const genreName = args.genreName;
@@ -441,6 +462,7 @@ const root = {
 
   getArtists: retrieveArtists,
   getArtist: retrieveArtist,
+  setArtist: setArtist,
 
   getCustomers: retrieveCustomers,
   getCustomer: retrieveCustomer,
