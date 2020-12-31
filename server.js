@@ -375,9 +375,7 @@ const setGenre = (args) => {
   const genreName = args.genreName;
 
   if (genreId) {
-    if (updateGenre(genreId, genreName)) {
-      return retrieveGenre({ genreId: genreId});
-    }
+    updateGenre(genreId, genreName);
   } else {
     if (addGenre(genreName)) {
       
@@ -389,16 +387,17 @@ const updateGenre = (genreId, genreName) => {
   const sql = `
     UPDATE Genre
     SET Name = ?
-    WHERE GenreID = ?;
+    WHERE GenreId = ?;
     `;
 
-  return runSql(sql, [genreId, genreName]);
+  return runSql(sql, [genreName, genreId]);
 }
 
 const addGenre = (genreName) => {
   const maxSql = `
     SELECT MAX(GenreID)+1 as GenreId FROM Genre;
-  `
+  `;
+
   const i = retrieveRowByFields(maxSql, [])
     .then(x => {
 
@@ -428,6 +427,7 @@ const runSql = (sql, params) => {
       if (err) {
         reject(err);
       }
+      resolve();
     });
   });
   return p;
