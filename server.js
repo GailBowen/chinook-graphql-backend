@@ -181,7 +181,7 @@ const retrieveMediaTypes = (args) => {
 }
 
 const retrievePlaylists = (args) => {
-  const sql = 'SELECT * FROM Playlist';
+  const sql = 'SELECT * FROM Playlist ORDER BY Name';
   return retrieveList(sql);
 }
 
