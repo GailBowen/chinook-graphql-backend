@@ -19,6 +19,7 @@ class Db {
       this.db.all(sql, fields, (err, rows) => {
 
         if (err) {
+          console.error(err);
           reject(err);
         }
 

@@ -129,7 +129,7 @@ exports.schema = buildSchema(`
   }
   type PlaylistTrack {
     PlaylistId: Int
-    Track: Int
+    TrackId: Int
   }
   type Track {
     TrackId: Int
