@@ -1,52 +1,46 @@
 const express = require('express');
 const graphqlHTTP = require('express-graphql');
-const sqlite3 = require('sqlite3').verbose();
 const cors = require('cors');
 
 const { schema } = require('./schema.js');
+const { Db } = require('./Db.js');
 
-let db = new sqlite3.Database('chinook.db', (err) => {
-  if (err) {
-    console.error(err.message);
-  }
-
-  console.log('Opened database');
-});
-
+const db = new Db();
 
 const retrieveAlbums = (args) => {
+  console.debug('boogie woogie woogie');
   const sql = 'SELECT * FROM Album ORDER BY Title';
-  return retrieveList(sql);
+  return db.retrieveList(sql);
 }
 
 const retrieveArtists = (args) => {
   const sql = 'SELECT * FROM Artist ORDER BY Name';
-  return retrieveList(sql);
+  return db.retrieveList(sql);
 }
 
 const retrieveCustomers = (args) => {
   const sql = 'SELECT * FROM Customer ORDER BY LastName';
-  return retrieveList(sql);
+  return db.retrieveList(sql);
 }
 
 const retrieveEmployees = (args) => {
   const sql = 'SELECT * FROM Employee ORDER BY LastName';
-  return retrieveList(sql);
+  return db.retrieveList(sql);
 }
 
 const retrieveMediaTypes = (args) => {
   const sql = 'SELECT * FROM MediaType ORDER BY Name';
-  return retrieveList(sql);
+  return db.retrieveList(sql);
 }
 
 const retrievePlaylists = (args) => {
   const sql = 'SELECT * FROM Playlist ORDER BY Name';
-  return retrieveList(sql);
+  return db.retrieveList(sql);
 }
 
 const retrieveGenres = (args) => {
   const sql = 'SELECT * FROM Genre ORDER BY Name';
-  return retrieveList(sql);
+  return db.retrieveList(sql);
 }
 
 const retrieveTracks = (args) => {
@@ -56,22 +50,20 @@ const retrieveTracks = (args) => {
     JOIN Album al ON t.AlbumId=al.AlbumId
     JOIN Artist ar ON al.ArtistId=ar.ArtistId
     ORDER BY Name`;
-  return retrieveList(sql);
+  return db.retrieveList(sql);
 }
-
-const retrieveList = (sql) => retrieveListByFields(sql, []);
 
 const retrieveAlbumsByArtist = (args) => {
   const sql = 'SELECT * FROM Album WHERE ArtistId = ?';
   const id = args.artistId;
-  return retrieveListByFields(sql, [id]);
+  return db.retrieveListByFields(sql, [id]);
 }
 
 const retrieveInvoicesByCustomer = (args) => {
   const sql = 'SELECT * FROM Invoice WHERE CustomerId = ?';
   const id = args.customerId;
 
-  return retrieveListByFields(sql, [id]);
+  return db.retrieveListByFields(sql, [id]);
 }
 
 const retrieveInvoiceLines = (args) => {
@@ -82,57 +74,42 @@ const retrieveInvoiceLines = (args) => {
     WHERE il.InvoiceId = ?`;
   const id = args.invoiceId;
 
-  return retrieveListByFields(sql, [id]);
+  return db.retrieveListByFields(sql, [id]);
 }
 
 const retrievePlaylistTracks = (args) => {
   const sql = 'SELECT * FROM PlaylistTrack WHERE PlaylistId = ?';
   const id = args.playListId;
 
-  return retrieveListByFields(sql, [id]);
+  return db.retrieveListByFields(sql, [id]);
 }
 
 const retrieveTrackPlaylists = (args) => {
   const sql = 'SELECT * FROM PlaylistTrack WHERE TrackId = ?';
   const id = args.trackId;
 
-  return retrieveListByFields(sql, [id]);
+  return db.retrieveListByFields(sql, [id]);
 }
 
 const retrieveTracksByAlbum = (args) => {
   const sql = 'SELECT * FROM Track WHERE AlbumId = ?';
   const id = args.albumId;
 
-  return retrieveListByFields(sql, [id]);
+  return db.retrieveListByFields(sql, [id]);
 }
 
 const retrieveTracksByGenre = (args) => {
   const sql = 'SELECT * FROM Track WHERE GenreId = ?';
   const id = args.genreId;
 
-  return retrieveListByFields(sql, [id]);
+  return db.retrieveListByFields(sql, [id]);
 }
 
 const retrieveTracksByMediaType = (args) => {
   const sql = 'SELECT * FROM Track WHERE MediaTypeId = ?';
   const id = args.mediaTypeId;
 
-  return retrieveListByFields(sql, [id]);
-}
-
-const retrieveListByFields = (sql, fields) => {
-  const p = new Promise((resolve, reject) => {
-    db.all(sql, fields, (err, rows) => {
-
-      if (err) {
-        reject(err);
-      }
-
-      resolve(rows);
-    });
-  });
-
-  return p;
+  return db.retrieveListByFields(sql, [id]);
 }
 
 const retrieveAlbum = (args) => {
@@ -143,14 +120,14 @@ const retrieveAlbum = (args) => {
   WHERE Album.AlbumId = ?`;
   const id = args.albumId;
 
-  return retrieveRowByFields(sql, [id]);
+  return db.retrieveRowByFields(sql, [id]);
 }
 
 const retrieveArtist = (args) => {
   const sql = 'SELECT * FROM Artist WHERE ArtistId = ?';
   const id = args.artistId;
 
-  return retrieveRowByFields(sql, [id]);
+  return db.retrieveRowByFields(sql, [id]);
 }
 
 const retrieveCustomer = (args) => {
@@ -161,7 +138,7 @@ const retrieveCustomer = (args) => {
     WHERE c.CustomerId = ?`;
   const id = args.customerId;
 
-  return retrieveRowByFields(sql, [id]);
+  return db.retrieveRowByFields(sql, [id]);
 }
 
 const retrieveEmployee = (args) => {
@@ -172,33 +149,33 @@ const retrieveEmployee = (args) => {
     WHERE e1.EmployeeId = ?`;
   const id = args.employeeId;
 
-  return retrieveRowByFields(sql, [id]);
+  return db.retrieveRowByFields(sql, [id]);
 }
 
 const retrieveGenre = (args) => {
   const sql = 'SELECT * FROM Genre WHERE GenreId = ?';
   const id = args.genreId;
 
-  return retrieveRowByFields(sql, [id]);
+  return db.retrieveRowByFields(sql, [id]);
 }
 
 const retrieveInvoice = (args) => {
   const sql = 'SELECT * FROM Invoice WHERE InvoiceId = ?';
   const id = args.invoiceId;
 
-  return retrieveRowByFields(sql, [id]);
+  return db.retrieveRowByFields(sql, [id]);
 }
 
 const retrieveMediaType = (args) => {
   const sql = 'SELECT * FROM MediaType WHERE MediaTypeId = ?';
   const mediaTypeId = args.mediaTypeId;
-  return retrieveRowByFields(sql, mediaTypeId);
+  return db.retrieveRowByFields(sql, mediaTypeId);
 }
 
 const retrievePlaylist = (args) => {
   const sql = 'SELECT * FROM Playlist WHERE PlaylistId = ?';
   const playListId = args.playListId;
-  return retrieveRowByFields(sql, playListId);
+  return db.retrieveRowByFields(sql, playListId);
 } 
 
 const retrieveTrack = (args) => {
@@ -212,23 +189,8 @@ const retrieveTrack = (args) => {
     JOIN Artist ar ON a.ArtistID=ar.ArtistId
     WHERE t.TrackId = ?`;
   const trackId = args.trackId;
-  return retrieveRowByFields(sql, trackId);
+  return db.retrieveRowByFields(sql, trackId);
 }
-
-const retrieveRowByFields = (sql, fields) => {
-  const p = new Promise((resolve, reject) => {
-    db.get(sql, fields, (err, row) => {
-      if (err) {
-        reject(err);
-      }
-
-      resolve(row);
-    })
-  });
-
-  return p;
-}
-
 const setArtist = (args) => {
   const artistId = args.artistId;
   const artistName = args.artistName;
@@ -245,7 +207,7 @@ const updateArtist = (artistId, artistName) => {
     WHERE ArtistId = ?;
   `
 
-  return runSql(sql, [artistName, artistId]);
+  return db.runSql(sql, [artistName, artistId]);
 }
 
 const addArtist = (artist) => {
@@ -254,12 +216,12 @@ const addArtist = (artist) => {
   `;
 
 
-  const i = retrieveRowByFields(maxSql, [])
+  const i = db.retrieveRowByFields(maxSql, [])
     .then(x => {
       const sql = `
         INSERT INTO Artist (ArtistId, Name) VALUES (?, ?);
       `;
-      runSql(sql, [x.ArtistId, artist.artistName]);
+      db.runSql(sql, [x.ArtistId, artist.artistName]);
 
     });
 }
@@ -271,7 +233,7 @@ const deleteArtist = (args) => {
     DELETE FROM Artist WHERE ArtistId = ?;
   `;
 
-  runSql(sql, [artistId]);
+  db.runSql(sql, [artistId]);
 
 };
 
@@ -286,7 +248,7 @@ const setAlbum = (args) => {
     WHERE AlbumId = ?;
   `;
 
-  return runSql(sql, [albumName, albumArtist, albumId]);
+  return db.runSql(sql, [albumName, albumArtist, albumId]);
 };
 
 const addAlbum = (args) => {
@@ -297,14 +259,14 @@ const addAlbum = (args) => {
     SELECT MAX(AlbumId)+1 AS AlbumId FROM Album;
   `;
 
-  retrieveRowByFields(maxSql, [])
+  db.retrieveRowByFields(maxSql, [])
     .then(x => {
       const sql = `
         INSERT INTO Album (AlbumId, Title, ArtistId)
         VALUES (?, ?, ?);
       `;
 
-      runSql(sql, [x.AlbumId, albumName, albumArtist]);
+      db.runSql(sql, [x.AlbumId, albumName, albumArtist]);
     })
 };
 
@@ -315,7 +277,7 @@ const deleteAlbum = (args) => {
     DELETE FROM Album WHERE AlbumId = ?;
   `;
 
-  runSql(sql, [albumId]);
+  db.runSql(sql, [albumId]);
 };
 
 const setGenre = (args) => {
@@ -338,7 +300,7 @@ const updateGenre = (genreId, genreName) => {
     WHERE GenreId = ?;
     `;
 
-  return runSql(sql, [genreName, genreId]);
+  return db.runSql(sql, [genreName, genreId]);
 }
 
 const addGenre = (genreName) => {
@@ -346,7 +308,7 @@ const addGenre = (genreName) => {
     SELECT MAX(GenreID)+1 as GenreId FROM Genre;
   `;
 
-  const i = retrieveRowByFields(maxSql, [])
+  const i = db.retrieveRowByFields(maxSql, [])
     .then(x => {
 
       const sql = `
@@ -355,7 +317,7 @@ const addGenre = (genreName) => {
           ?, ?);
       `;
 
-      runSql(sql, [x.GenreId, genreName.genreName]);
+      db.runSql(sql, [x.GenreId, genreName.genreName]);
     });
 }
 
@@ -365,20 +327,7 @@ const deleteGenre = (args) => {
     DELETE FROM Genre WHERE GenreId=?;
   `;
 
-  runSql(sql, [genreId]);
-}
-
-const runSql = (sql, params) => {
-  const p = new Promise((resolve, reject) => {
-    db.run(sql, params, (err) =>  {
-
-      if (err) {
-        reject(err);
-      }
-      resolve();
-    });
-  });
-  return p;
+  db.runSql(sql, [genreId]);
 }
 
 // Root resolver
