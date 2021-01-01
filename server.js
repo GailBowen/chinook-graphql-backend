@@ -58,6 +58,10 @@ const schema = buildSchema(`
     setArtist(artistId: Int, artistName: String!): Artist
     addArtist(artistName: String!): Artist
     deleteArtist(artistId: Int!): Int
+
+    setAlbum(albumId: Int, albumName: String!, albumArtist: Int!) : Album
+    addAlbum(albumName: String!, albumArtist: Int!) : Album
+    deleteAlbum(albumId: Int!) : Int
   }
   type Album {
     AlbumId: Int
@@ -157,7 +161,6 @@ const schema = buildSchema(`
     ArtistName: String
   }
 `);
-
 
 const retrieveAlbums = (args) => {
   const sql = 'SELECT * FROM Album ORDER BY Title';
@@ -409,7 +412,7 @@ const addArtist = (artist) => {
     });
 }
 
-const deleteArtist = (args)  => {
+const deleteArtist = (args) => {
   const artistId = args.artistId;
 
   const sql = `
@@ -418,6 +421,49 @@ const deleteArtist = (args)  => {
 
   runSql(sql, [artistId]);
 
+};
+
+const setAlbum = (args) => {
+  const albumId = args.albumId;
+  const albumName = args.albumName;
+  const albumArtist = args.albumArtist;
+
+  const sql = `
+    UPDATE Album
+    SET Title = ?, ArtistId = ?
+    WHERE AlbumId = ?;
+  `;
+
+  return runSql(sql, [albumName, albumArtist, albumId]);
+};
+
+const addAlbum = (args) => {
+  const albumName = args.albumName;
+  const albumArtist = args.albumArtist;
+
+  const maxSql = `
+    SELECT MAX(AlbumId)+1 AS AlbumId FROM Album;
+  `;
+
+  retrieveRowByFields(maxSql, [])
+    .then(x => {
+      const sql = `
+        INSERT INTO Album (AlbumId, Title, ArtistId)
+        VALUES (?, ?, ?);
+      `;
+
+      runSql(sql, [x.AlbumId, albumName, albumArtist]);
+    })
+};
+
+const deleteAlbum = (args) => {
+  const albumId = args.albumId;
+
+  const sql = `
+    DELETE FROM Album WHERE AlbumId = ?;
+  `;
+
+  runSql(sql, [albumId]);
 };
 
 const setGenre = (args) => {
@@ -488,6 +534,9 @@ const root = {
   getAlbums: retrieveAlbums,
   getAlbum: retrieveAlbum,
   getAlbumsByArtist: retrieveAlbumsByArtist,
+  setAlbum: setAlbum,
+  addAlbum: addAlbum,
+  deleteAlbum: deleteAlbum,
 
   getArtists: retrieveArtists,
   getArtist: retrieveArtist,
