@@ -56,6 +56,8 @@ const schema = buildSchema(`
     deleteGenre(genreId: Int!) : Int
 
     setArtist(artistId: Int, artistName: String!): Artist
+    addArtist(artistName: String!): Artist
+    deleteArtist(artistId: Int!): Int
   }
   type Album {
     AlbumId: Int
@@ -391,6 +393,33 @@ const updateArtist = (artistId, artistName) => {
   return runSql(sql, [artistName, artistId]);
 }
 
+const addArtist = (artist) => {
+  const maxSql = `
+    SELECT MAX(ArtistId)+1 AS ArtistId FROM Artist;
+  `;
+
+
+  const i = retrieveRowByFields(maxSql, [])
+    .then(x => {
+      const sql = `
+        INSERT INTO Artist (ArtistId, Name) VALUES (?, ?);
+      `;
+      runSql(sql, [x.ArtistId, artist.artistName]);
+
+    });
+}
+
+const deleteArtist = (args)  => {
+  const artistId = args.artistId;
+
+  const sql = `
+    DELETE FROM Artist WHERE ArtistId = ?;
+  `;
+
+  runSql(sql, [artistId]);
+
+};
+
 const setGenre = (args) => {
   const genreId = args.genreId;
   const genreName = args.genreName;
@@ -463,6 +492,8 @@ const root = {
   getArtists: retrieveArtists,
   getArtist: retrieveArtist,
   setArtist: setArtist,
+  addArtist: addArtist,
+  deleteArtist: deleteArtist,
 
   getCustomers: retrieveCustomers,
   getCustomer: retrieveCustomer,
