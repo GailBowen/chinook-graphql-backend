@@ -46,6 +46,9 @@ const root = {
 
   getCustomers: () => customer.retrieveCustomers(),
   getCustomer: (args) => customer.retrieveCustomer(args),
+  setCustomer: (args) => customer.setCustomer(args),
+  addCustomer: (args) => customer.addCustomer(args),
+  deleteCustomer: (args) => customer.deleteCustomer(args),
 
   getEmployees: () => employee.retrieveEmployees(),
   getEmployee: (args) => employee.retrieveEmployee(args),

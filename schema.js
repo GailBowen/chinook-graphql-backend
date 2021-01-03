@@ -49,6 +49,17 @@ exports.schema = buildSchema(`
     setAlbum(albumId: Int, albumName: String!, albumArtist: Int!) : Album
     addAlbum(albumName: String!, albumArtist: Int!) : Album
     deleteAlbum(albumId: Int!) : Int
+
+
+    setCustomer(customerId: Int!, firstName: String!, lastName: String!, address: String!, 
+      city: String!, state: String!, postalCode: String!, country: String!, email: String!, 
+      supportRepId: Int!) : Customer
+
+    addCustomer(firstName: String!, lastName: String!, address: String!, 
+      city: String!, state: String!, postalCode: String!, country: String!, email: String!,
+      supportRepId: Int!) : Customer
+
+    deleteCustomer(customerId: Int!) : Int
   }
   type Album {
     AlbumId: Int
@@ -73,7 +84,7 @@ exports.schema = buildSchema(`
     Phone: String
     Fax: String
     Email: String
-    SupportRepId: String
+    SupportRepId: Int
     SupportRepFirstName: String
     SupportRepLastName: String
   },
