@@ -8,6 +8,7 @@ exports.schema = buildSchema(`
 
     getArtists: [Artist],
     getArtist(artistId: Int!): Artist,
+    getArtistByName(name: String!): Artist,
 
     getCustomers: [Customer],
     getCustomer(customerId: Int!): Customer,
@@ -36,6 +37,7 @@ exports.schema = buildSchema(`
     getTracksByAlbum(albumId: Int!): [Track]
     getTracksByMediaType(mediaTypeId: Int!): [Track]
     getTracksByGenre(genreId: Int!): [Track]
+    getSpotifyLinks: [SpotifyLink],
   },
   type Mutation {
     setGenre(genreId: Int, genreName: String!): Genre
@@ -158,5 +160,10 @@ exports.schema = buildSchema(`
     ArtistId: Int
     ArtistName: String
   }
+  type SpotifyLink {
+    SpotifyLinkId: Int
+    Description: String
+    Link: String
+  },
 `);
 

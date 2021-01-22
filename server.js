@@ -15,6 +15,7 @@ const { Track } = require('./Track.js');
 const { Invoice } = require('./Invoice.js');
 const { InvoiceLine } = require('./InvoiceLine.js');
 const { PlaylistTrack } = require('./PlaylistTrack.js');
+const { SpotifyLink } = require('./SpotifyLink.js');
 
 const db = new Db();
 const album = new Album(db);
@@ -28,6 +29,7 @@ const track = new Track(db);
 const invoice = new Invoice(db);
 const invoiceLine = new InvoiceLine(db);
 const playlistTrack = new PlaylistTrack(db);
+const spotifyLink = new SpotifyLink(db);
 
 // Root resolver
 const root = {
@@ -40,6 +42,7 @@ const root = {
 
   getArtists: () => artist.retrieveArtists(),
   getArtist: (args) => artist.retrieveArtist(args),
+  getArtistByName: (args) => artist.retrieveArtistByName(args),
   setArtist: (args) => artist.setArtist(args),
   addArtist: (args) => artist.addArtist(args),
   deleteArtist: (args) => artist.deleteArtist(args),
@@ -76,6 +79,8 @@ const root = {
   getTracksByAlbum: (args) => track.retrieveTracksByAlbum(args),
   getTracksByMediaType: (args) => track.retrieveTracksByMediaType(args),
   getTracksByGenre: (args) => track.retrieveTracksByGenre(args),
+
+  getSpotifyLinks: () => spotifyLink.retrieveLinks(),
 };
 
 var app = express();

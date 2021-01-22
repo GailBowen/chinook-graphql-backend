@@ -15,6 +15,13 @@ class Artist {
     return this.db.retrieveRowByFields(sql, [id]);
   }
 
+  retrieveArtistByName(args) {
+    const sql = 'SELECT * FROM Artist WHERE Name = ?';
+    const artistName = args.name;
+
+    return this.db.retrieveRowByFields(sql, artistName);
+  }
+
   setArtist(args) {
     const artistId = args.artistId;
     const artistName = args.artistName;
