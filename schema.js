@@ -37,7 +37,9 @@ exports.schema = buildSchema(`
     getTracksByAlbum(albumId: Int!): [Track]
     getTracksByMediaType(mediaTypeId: Int!): [Track]
     getTracksByGenre(genreId: Int!): [Track]
-    getSpotifyLinks: [SpotifyLink],
+
+    getSpotifyLinks: [SpotifyLink]
+    getSpotifyLink(spotifyLinkId: Int!): SpotifyLink
   },
   type Mutation {
     setGenre(genreId: Int, genreName: String!): Genre

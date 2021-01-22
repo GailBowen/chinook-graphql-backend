@@ -9,6 +9,18 @@ class SpotifyLink {
         session = Session()
       }
 
+      
+    retrieveLink(args) {
+      const sql = 'SELECT * FROM SpotifyLink WHERE SpotifyLinkId = ?';
+      const id = args.spotifyLinkId;
+
+      return this.db.retrieveRowByFields(sql, [id]);
+    }
+
+    
+
+  
+
 }
 
 exports.SpotifyLink = SpotifyLink;

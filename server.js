@@ -81,6 +81,8 @@ const root = {
   getTracksByGenre: (args) => track.retrieveTracksByGenre(args),
 
   getSpotifyLinks: () => spotifyLink.retrieveLinks(),
+  getSpotifyLink: (args) => spotifyLink.retrieveLink(args),
+
 };
 
 var app = express();
