@@ -64,6 +64,8 @@ exports.schema = buildSchema(`
       supportRepId: Int!) : Customer
 
     deleteCustomer(customerId: Int!) : Int
+
+    addSpotifyLink(description: String!, link: String!): SpotifyLink
   }
   type Album {
     AlbumId: Int

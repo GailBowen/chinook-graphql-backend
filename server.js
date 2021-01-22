@@ -82,6 +82,7 @@ const root = {
 
   getSpotifyLinks: () => spotifyLink.retrieveLinks(),
   getSpotifyLink: (args) => spotifyLink.retrieveLink(args),
+  addSpotifyLink: (args) => spotifyLink.addSpotifyLink(args),
 
 };
 

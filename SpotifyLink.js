@@ -17,6 +17,21 @@ class SpotifyLink {
       return this.db.retrieveRowByFields(sql, [id]);
     }
 
+    addSpotifyLink(args) {
+      const maxSql = `
+        SELECT MAX(SpotifyLinkId)+1 AS SpotifyLinkId FROM SpotifyLink;
+      `;
+  
+  
+      const i = this.db.retrieveRowByFields(maxSql, [])
+        .then(x => {
+          const sql = `
+            INSERT INTO SpotifyLink (SpotifyLinkId, Description, Link) VALUES (?, ?, ?);
+          `;
+          this.db.runSql(sql, [x.spotifyLinkId, args.description, args.link]);
+        });
+    }
+
     
 
   
